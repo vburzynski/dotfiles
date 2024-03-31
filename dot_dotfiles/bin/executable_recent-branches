@@ -1,0 +1,131 @@
+#!/bin/bash
+
+# function definition to print out help text
+showHelp() {
+cat << EOF
+Usage: ./branches -b <target-branch> -n <number-of-branches> [-hrV]
+Analyze the most recent or oldest branches in a repository as well as how
+many commits ahead or behind it is from a specified branch
+
+-h  Display help
+-n  Number of branches to output (default: 10)
+-b  Target branch to compare against (default is default branch)
+-r  Reverse sort order (default: most recent first)
+-l  Use local branches instead of remote origin
+
+EOF
+}
+
+# get the default branch
+defaultbranch=$(git remote show origin | sed -n '/HEAD branch/s/.*: //p')
+
+# set some defaults...
+refbranch=$defaultbranch
+count=10
+sort="-committerdate"
+pattern="refs/remotes/origin/"
+strip=3
+
+# parse the option arguments
+while getopts ":hn::b::orl" option; do
+  case $option in
+    h) # display Help
+      showHelp
+      exit
+      ;;
+    n) # enter a number
+      count=$OPTARG
+      ;;
+    b) # enter a branch
+      refbranch=$OPTARG
+      ;;
+    r) # reverse
+      sort="committerdate"
+      ;;
+    l) # use local branches
+      pattern="refs/heads/"
+      strip=2
+      ;;
+    *)
+      echo "Internal error!"
+      exit 1
+      ;;
+  esac
+done
+
+# string that will be interpolated by the git for-each-ref below
+# this forms a large fragment of the final output
+format="%(refname:short)|"
+format+="%(color:yellow)%(refname:lstrip=$strip)|"
+format+="%(color:cyan)%(committerdate:relative)|"
+format+="%(color:magenta)%(authorname)|"
+format+="%(color:blue)%(subject)%(color:reset)"
+
+# a header string
+header="\033[37mBEHIND|"
+header+="\033[37mAHEAD|"
+header+="\033[37mBRANCH|"
+header+="\033[37mLASTCOMMIT|"
+header+="\033[37mAUTHOR|"
+header+="\033[37mMESSAGE"
+
+echo -e "━━━━━━━━━━━━━━━━━━"
+echo -e "COMPARING AGAINST: \033[31m$refbranch\033[0m"
+echo -e "━━━━━━━━━━━━━━━━━━"
+
+# loop over and process the output information on each git ref (branch)
+# THEN append the headers
+# THEN format the lines as columns
+git for-each-ref \
+  --sort=${sort} \
+  ${pattern} \
+  --format="${format}" \
+  --color=always \
+  --count=${count} \
+  | while read line; do
+    # parse the first refname to determine the current branch
+    branch=$(echo "$line" | awk 'BEGIN { FS = "|" }; { print $1 }' | tr -d '*');
+
+    # parse how far ahead or behind the current branch is
+    behind="\033[31m--$(git rev-list --count "${branch}..${refbranch}")"
+    ahead="\033[32m++$(git rev-list --count "${refbranch}..${branch}")"
+
+    # remove the first refname from the line information
+    colorline=$(echo "$line" | sed 's/^[^|]*|//');
+
+    # combine into a single line
+    # also enforce a max lenght of 70 characters for the git message column
+    echo -e "$behind|$ahead|$colorline" | awk -F'|' -vOFS='|' '{if (length($6)>70) $6=substr($6,1,70) "\033[0m"}1';
+  done \
+  | ( echo -e "$header\n" && cat) \
+  | column -ts'|'
+
+# NOTE: add this into the pipes for debugging the color escape sequences...
+# | cat -e \
+
+# More on Options
+# https://stackoverflow.com/questions/16483119/an-example-of-how-to-use-getopts-in-bash
+
+# REFERENCE
+# https://stackoverflow.com/questions/5188320/how-can-i-get-a-list-of-git-branches-ordered-by-most-recent-commit
+#
+# ORIGINAL IMPLEMENTATION
+# [alias]
+#     # ATTENTION: All aliases prefixed with ! run in /bin/sh make sure you use sh syntax, not bash/zsh or whatever
+#     recentb = "!r() { refbranch=$1 count=$2; git for-each-ref --sort=-committerdate refs/heads --format='%(refname:short)|%(HEAD)%(color:yellow)%(refname:short)|%(color:bold green)%(committerdate:relative)|%(color:blue)%(subject)|%(color:magenta)%(authorname)%(color:reset)' --color=always --count=${count:-20} | while read line; do branch=$(echo \"$line\" | awk 'BEGIN { FS = \"|\" }; { print $1 }' | tr -d '*'); ahead=$(git rev-list --count \"${refbranch:-origin/master}..${branch}\"); behind=$(git rev-list --count \"${branch}..${refbranch:-origin/master}\"); colorline=$(echo \"$line\" | sed 's/^[^|]*|//'); echo \"$ahead|$behind|$colorline\" | awk -F'|' -vOFS='|' '{$5=substr($5,1,70)}1' ; done | ( echo \"ahead|behind|branch|lastcommit|message|author\n\" && cat) | column -ts'|';}; r"
+#
+# REFORMATTED ORIGINAL
+# refbranch=$1
+# count=$2;
+# git for-each-ref --sort=-committerdate refs/heads \
+#   --format='%(refname:short)|%(HEAD)%(color:yellow)%(refname:short)|%(color:bold green)%(committerdate:relative)|%(color:blue)%(subject)|%(color:magenta)%(authorname)%(color:reset)' \
+#   --color=always --count=${count:-20} \
+#   | while read line; do \
+#     branch=$(echo "$line"s | awk 'BEGIN { FS = "|" }; { print $1 }' | tr -d '*'); \
+#     ahead=$(git rev-list --count "${refbranch:-origin/master}..${branch}"); \
+#     behind=$(git rev-list --count "${branch}..${refbranch:-origin/master}"); \
+#     colorline=$(echo "$line" | sed 's/^[^|]*|//'); \
+#     echo "$ahead|$behind|$colorline" | awk -F'|' -vOFS='|' '{$5=substr($5,1,70)}1' ;
+#   done \
+#   | ( echo "ahead|behind|branch|lastcommit|message|author\n" && cat) \
+#   | column -ts'|'
