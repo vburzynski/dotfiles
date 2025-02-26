@@ -29,7 +29,7 @@
 5. Configure dotfiles
 
    ```shell
-   chezmoi init https://github.com/bendyworks/dotfiles.git
+   chezmoi init https://github.com/vburzynski/dotfiles.git
    ```
 
 6. Configure Powerlevel10k
