@@ -1,4 +1,4 @@
-# Bendyworks Dotfiles
+# Personal Dotfiles
 
 ## Installation
 
