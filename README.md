@@ -13,7 +13,7 @@
 2. Install [oh-my-zsh](https://ohmyz.sh/#install)
 
    ```shell
-   sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+   sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
    ```
 
 3. Install [chezmoi](https://www.chezmoi.io/user-guide/setup/)
@@ -36,14 +36,4 @@
 
    ```shell
    p10k configure
-   ```
-
-### Updating
-
-1. check the `.chezmoiexternal.toml` file
-   1. update the powerlevel10k version to the latest version
-2. Update Externals
-
-   ```shell
-   chezmoi --refresh-externals apply
    ```
