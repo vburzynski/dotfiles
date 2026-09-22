@@ -150,15 +150,6 @@
   ds = -c diff.external=difft show --ext-diff # Show the most recent commit with difftastic.
   dft = -c diff.external=difft diff # `git diff` with difftastic.
 
-[filter "lfs"]
-  clean = git-lfs clean -- %f
-  smudge = git-lfs smudge -- %f
-  process = git-lfs filter-process
-  required = true
-
-# REFS
-# https://www.jacobtomlinson.co.uk/quick%20tip/2016/01/18/pretty-git-logs-with-git-lg/
-
 [diff]
   tool = kdiff3
 [mergetool "kdiff3"]
@@ -177,3 +168,10 @@
   template = ~/.gitmessage
 [gpg]
   format = ssh
+[filter "lfs"]
+  # REFS
+  # https://www.jacobtomlinson.co.uk/quick%20tip/2016/01/18/pretty-git-logs-with-git-lg/
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true

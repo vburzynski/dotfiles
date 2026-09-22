@@ -58,6 +58,8 @@ alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[
 
 # ==================================================================================================
 
-alias git-pull-directories="find . -type d -depth 1 -exec git --git-dir={}/.git --work-tree=$PWD/{} pull origin master \;"
+# alias git-pull-directories="find . -type d -depth 1 -exec git --git-dir={}/.git --work-tree=$PWD/{} pull origin master \;"
+# alias git-pull-directories="find . -mindepth 1 -maxdepth 1 -type d ! -name '.*' -print -exec git -C {} pull \;"
+alias git-pull-directories="find . -mindepth 1 -maxdepth 1 -type d -exec test -e {}/.git \; -exec git -C {} pull \;"
 alias git-switch="git branch | fzf | xargs git switch"
 alias git-checkout="git checkout $(git branch | fzf)"
