@@ -34,9 +34,9 @@
   s         = status --short
 
   # CHECKOUT ---------------------------------------------------------------------------------------
-  co        = checkout					  # checkout
-  cp        = checkout --patch		# checkout-patch
-  nb        = checkout -b 				# new branch
+  co        = checkout            # checkout
+  cp        = checkout --patch    # checkout-patch
+  nb        = checkout -b         # new branch
   go        = !sh -c '[[ "$(git branch | grep -i $1 | wc -l)" -eq "1" ]] && git checkout "$(git branch | grep -i $1 | tr -d [:space:])" || echo "\\\"$1\\\" matches zero or multiple branches"' -
 
   # checkout PR by number
@@ -140,6 +140,16 @@
            git rev-parse HEAD | tr -d [:space:] | pbcopy; \
          fi"
 
+  # Difftastic aliases
+  # so `git dlog -p` is `git log -p` with difftastic,
+  # and likewise for the other subcommands.
+  dlog = -c diff.external=difft log --ext-diff
+  dshow = -c diff.external=difft show --ext-diff
+  ddiff = -c diff.external=difft diff
+  dl = -c diff.external=difft log -p --ext-diff # `git log` with patches shown with difftastic.
+  ds = -c diff.external=difft show --ext-diff # Show the most recent commit with difftastic.
+  dft = -c diff.external=difft diff # `git diff` with difftastic.
+
 [filter "lfs"]
   clean = git-lfs clean -- %f
   smudge = git-lfs smudge -- %f
@@ -150,17 +160,20 @@
 # https://www.jacobtomlinson.co.uk/quick%20tip/2016/01/18/pretty-git-logs-with-git-lg/
 
 [diff]
-	tool = kdiff3
+  tool = kdiff3
 [mergetool "kdiff3"]
-	path = /Applications/kdiff3.app/Contents/MacOS/kdiff3
+  path = /Applications/kdiff3.app/Contents/MacOS/kdiff3
 [user]
-	name = {{ .name }}
-	email = {{ .email }}
+  name = {{ .name }}
+  email = {{ .email }}
+  signingkey = {{ .signingkey }}
 [color]
-	ui = true
+  ui = true
 [init]
-	defaultBranch = main
+  defaultBranch = main
 [pager]
-	branch = false
+  branch = false
 [commit]
   template = ~/.gitmessage
+[gpg]
+  format = ssh

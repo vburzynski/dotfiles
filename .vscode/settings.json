@@ -1,0 +1,11 @@
+{
+  "files.associations": {
+    ".bashrc.local": "shellscript",
+    ".bashrc.unused": "shellscript",
+    ".zshrc.local": "shellscript",
+    "dot_*": "shellscript",
+    "dot_editorconfig": "editorconfig",
+    "dot_env.*": "dotenv",
+    ".chezmoiignore": "gitignore"
+  },
+}
