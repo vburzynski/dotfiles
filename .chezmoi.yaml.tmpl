@@ -12,6 +12,14 @@
 {{-   $email = promptString "Email Address" -}}
 {{- end -}}
 
+{{- $signingkey := "" -}}
+{{- if hasKey . "signingkey" -}}
+{{-   $signingkey = .signingkey -}}
+{{- else -}}
+{{-   $signingkey = promptString "Signing Key Location" -}}
+{{- end -}}
+
 data:
   name: {{ $name | quote }}
   email: {{ $email | quote }}
+  signingkey: {{ $signingkey | quote }}
