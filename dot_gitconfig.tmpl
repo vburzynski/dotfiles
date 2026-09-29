@@ -140,6 +140,9 @@
            git rev-parse HEAD | tr -d [:space:] | pbcopy; \
          fi"
 
+  # programmatically checkout the default branch; whether that's main, default, or something else
+  default-branch = !git checkout $(git rev-parse --abbrev-ref origin/HEAD | cut -d/ -f2-)
+
   # Difftastic aliases
   # so `git dlog -p` is `git log -p` with difftastic,
   # and likewise for the other subcommands.
