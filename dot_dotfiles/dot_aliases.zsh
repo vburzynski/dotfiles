@@ -39,6 +39,9 @@ alias psack='ps aux | grep'                  # process search helper
 # run a server in the current directory
 alias server='ruby -run -e httpd . -p 9090'
 
+alias server_ruby='ruby -run -e httpd . -p 9090'
+alias server_python='python -m SimpleHTTPServer 3000'
+
 # URL-encode strings
 alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
 
@@ -62,5 +65,8 @@ alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[
 # alias git-pull-directories="find . -mindepth 1 -maxdepth 1 -type d ! -name '.*' -print -exec git -C {} pull \;"
 alias git-pull-directories="find . -mindepth 1 -maxdepth 1 -type d -exec test -e {}/.git \; -exec git -C {} pull \;"
 alias git-switch="git branch | fzf | xargs git switch"
+
 # FIXME: this triggers when zsh loads
 # alias git-checkout="git checkout $(git branch | fzf)"
+
+alias print_path='echo "$PATH" | tr ":" "\n"'

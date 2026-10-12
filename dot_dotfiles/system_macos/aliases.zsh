@@ -1,5 +1,17 @@
 # NETWORKING =======================================================================================
 
+# Moves a file to the MacOS trash
+trash () { command mv "$@" ~/.Trash ; }
+
+# Opens any file in MacOS Quicklook Preview
+ql () { qlmanage -p "$*" >& /dev/null; }
+
+# use spotlight to search for something by display name
+# https://keith.github.io/xcode-man-pages/mdfind.1.html
+spotlight () { mdfind "kMDItemDisplayName == '$@'wc"; }
+
+alias cleanupDS="find . -type f -name '*.DS_Store' -ls -delete"
+
 alias dns-flush="sudo killall -HUP mDNSResponder"
 
 # FINDER ===========================================================================================
