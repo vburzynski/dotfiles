@@ -63,13 +63,11 @@ alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[
 
 # alias git-pull-directories="find . -type d -depth 1 -exec git --git-dir={}/.git --work-tree=$PWD/{} pull origin master \;"
 # alias git-pull-directories="find . -mindepth 1 -maxdepth 1 -type d ! -name '.*' -print -exec git -C {} pull \;"
-alias git-pull-directories="find . -mindepth 1 -maxdepth 1 -type d -exec test -e {}/.git \; -print -exec git -C {} pull \;"
+# alias git-pull-directories="find . -mindepth 1 -maxdepth 1 -type d -exec test -e {}/.git \; -print -exec git -C {} pull \;"
 alias git-pull-directories='find . -mindepth 1 -maxdepth 1 -type d -exec test -e {}/.git \; -exec sh -c '\''printf "\n==> %s\n" "${1#./}"; git -C "$1" pull'\'' _ {} \;'
 
 alias git-switch="git branch | fzf | xargs git switch"
 alias git-delete="git branch --format=\"%(refname:short)\" | fzf -m --preview 'git log -1 --color=always {}' | xargs -I {} git branch -D '{}'"
-
-# FIXME: this triggers when zsh loads
-# alias git-checkout="git checkout $(git branch | fzf)"
+alias git-delete-branches="git branch --no-color | fzf -m | xargs -I {} git branch -D '{}'"
 
 alias print_path='echo "$PATH" | tr ":" "\n"'
